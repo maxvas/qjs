@@ -1,6 +1,8 @@
 *.pro.user
 build-*
 *.dll*
+*.dll_*
+*.dll.*
 *.ilk
 *.exp
 *.pdb
