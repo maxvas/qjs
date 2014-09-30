@@ -1,7 +1,7 @@
 #ifndef QJSMAPPING_H
 #define QJSMAPPING_H
 
-#include <QJS>
+#include "QJS"
 #include <QObject>
 
 #define QJS_MAPPING_QSTRING(field, getter, setter) \

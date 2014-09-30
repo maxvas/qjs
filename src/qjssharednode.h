@@ -1,7 +1,7 @@
 #ifndef QJSSHAREDNODE_H
 #define QJSSHAREDNODE_H
 
-#include <QJS>
+#include "QJS"
 #include <QObject>
 
 class QJSSHARED_EXPORT QJSSharedNode : public QJS
