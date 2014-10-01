@@ -379,7 +379,7 @@ void QJS::set(QString name, QJS *val)
     }
     setType(QJS::Object);
     _objectData[name] = val;
-    _size = _arrayData.length();
+    _size = _arrayData.size();
 }
 
 void QJS::set(int index, QJS *val)
@@ -389,12 +389,12 @@ void QJS::set(int index, QJS *val)
         clear();
     }
     setType(QJS::Array);
-    while (_arrayData.length()<index+1)
+    while (_arrayData.size()<index+1)
     {
         _arrayData.push_back(0);
     }
     _arrayData[index] = val;
-    _size = _arrayData.length();
+    _size = _arrayData.size();
 }
 
 QJS::Type QJS::type() const
@@ -698,7 +698,7 @@ QJS &QJS::get(QString key)
 QJS &QJS::get(int index)
 {
     QJS *result = 0;
-    if (_arrayData.length()>index)
+    if (_arrayData.size()>index)
         result = _arrayData[index];
     else
         result = 0;
@@ -1605,7 +1605,7 @@ void QJS::transformParent()
                 delete js;
             }
             _parent->_objectData.clear();
-            _parent->_size=_parent->_arrayData.length();
+            _parent->_size=_parent->_arrayData.size();
         }
         if (_desirebleParentType==QJS::Object){
             foreach (QJS* js, _parent->_arrayData)
