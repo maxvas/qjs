@@ -12,7 +12,6 @@ TARGET = qjs
 TEMPLATE = lib
 
 DEFINES += QJS_LIBRARY
-
 SOURCES += qjs.cpp \
     qjsleakstest.cpp \
     qjssharednode.cpp \
@@ -24,15 +23,24 @@ HEADERS += qjs.h\
     QJSLeaksTest \
     qjssharednode.h \
     QJSSharedNode \
-    qjsmapping.h
+    qjsmapping.h \
+    QJS \
+    QJSMapping
     
 unix {
     target.path = /usr/lib/qjs
     includes.path =  /usr/include/qjs
     includes.files = $$HEADERS
-    INSTALLS += target
+} else {
+    target.path = ../install/lib
+    includes.path =  ../install/include
+    includes.files = $$HEADERS
 }
-
-OTHER_FILES += \
-    QJS \
-    QJSMapping
+features_dir = $$(QTDIR)/mkspecs/features
+qjs_feature.path = $$(QTDIR)/mkspecs/features
+qjs_feature.files = qjs.prf
+qjs_feature.extra += echo "INCLUDEPATH += /usr/include/qjs" > qjs.prf; \
+echo "LIBS += -L/usr/lib/qjs -lqjs" >> qjs.prf
+INSTALLS += target includes qjs_feature
+QMAKE_CLEAN += qjs.prf
+QMAKE_CLEAN += -r $${DESTDIR}

@@ -1,0 +1,2 @@
+INCLUDEPATH += "/usr/include/qjs"
+LIBS += -L"usr/lib/qjs" -lqjs
