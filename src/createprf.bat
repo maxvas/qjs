@@ -1,0 +1,1 @@
+echo INCLUDEPATH += "%1/lib" > qjs.prf && echo LIBS += -L"%1/lib" -lqjs >> qjs.prf

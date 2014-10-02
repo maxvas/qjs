@@ -38,13 +38,15 @@ unix {
 }
 features_dir = $$(QTDIR)/mkspecs/features
 qjs_feature.path = $$(QTDIR)/mkspecs/features
-qjs_feature.files = $${OUT_PWD}/qjs.prf
+qjs_feature.files = qjs.prf
 unix{
-	qjs_feature.extra += echo "INCLUDEPATH += /usr/include/qjs" > $${OUT_PWD}/qjs.prf && echo "LIBS += -L/usr/lib/qjs -lqjs" >> $${OUT_PWD}/qjs.prf
+	qjs_feature.extra += echo "INCLUDEPATH += /usr/include/qjs" > qjs.prf && echo "LIBS += -L/usr/lib/qjs -lqjs" >> qjs.prf
 }
 win32{
-	qjs_feature.extra += echo "INCLUDEPATH += \"$$PWD/../install/lib\"" > $${OUT_PWD}/qjs.prf && echo "LIBS += -L\"$$PWD/../install/lib\" -lqjs" >> $${OUT_PWD}/qjs.prf
+        qjs_feature.extra += echo "INCLUDEPATH += \"$$PWD/../install/lib\"" > qjs.prf & echo "LIBS += -L\"$$PWD/../install/lib\" -lqjs" >> qjs.prf
 }
-INSTALLS += target includes qjs_feature
-QMAKE_CLEAN += $${OUT_PWD}/qjs.prf
+qjsprf.path = $$(QTDIR)/mkspecs/features
+qjsprf.files = qjs.prf
+INSTALLS += target includes qjs_feature qjsprf
+QMAKE_CLEAN += qjs.prf
 QMAKE_CLEAN += -r $${DESTDIR}
