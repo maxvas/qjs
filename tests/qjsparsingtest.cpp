@@ -80,18 +80,32 @@ void QJSParsingTest::testParseText2()
     QVERIFY2(b["title"]=="Привет, мир! (А тут будет \"з@ковыристый:\"\tтекст)", "Failure");
 }
 
-void QJSParsingTest::testParseText3()
+void QJSParsingTest::testParseEmptyObject1()
 {
     QString sample = "{\n}";
     QJS a = QJS::fromJson(sample);
     QVERIFY2(a.hasParsingError()==false, "Failure");
 }
 
-void QJSParsingTest::testParseText4()
+void QJSParsingTest::testParseEmptyObject2()
 {
     QString sample = "{\n}";
     QJS a = QJS::fromJson(sample);
-    QVERIFY2(a==QJS::Null, "Failure");
+    QVERIFY2(a==QJS::Object, "Failure");
+}
+
+void QJSParsingTest::testParseEmptyArray1()
+{
+    QString sample = "[\n]";
+    QJS a = QJS::fromJson(sample);
+    QVERIFY2(a.hasParsingError()==false, "Failure");
+}
+
+void QJSParsingTest::testParseEmptyArray2()
+{
+    QString sample = "[\n]";
+    QJS a = QJS::fromJson(sample);
+    QVERIFY2(a==QJS::Array, "Failure");
 }
 
 void QJSParsingTest::testParseBinaryString()

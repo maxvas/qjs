@@ -1131,6 +1131,13 @@ QJS *QJS::extractArray(QString str, int &pos, int &line, int &column, bool &erro
         {
             return result;
         }
+        c = getChar(str, pos);
+        if (c==']')
+        {
+            pos++;
+            result->setType(QJS::Array);
+            return result;
+        }
         QJS *value = extractValue(str, pos, line, column, error, errorString);
         if (error)
         {
@@ -1455,6 +1462,7 @@ QJS *QJS::extractObject(QString str, int &pos, int &line, int &column, bool &err
         if (c=='}')
         {
             pos++;
+            result->setType(QJS::Object);
             return result;
         }
         QString key = extractKey(str, pos, line, column, error, errorString);
