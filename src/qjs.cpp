@@ -1451,6 +1451,12 @@ QJS *QJS::extractObject(QString str, int &pos, int &line, int &column, bool &err
         {
             return result;
         }
+        c = getChar(str, pos);
+        if (c=='}')
+        {
+            pos++;
+            return result;
+        }
         QString key = extractKey(str, pos, line, column, error, errorString);
         skipOtherChars(str, pos, line, column, error, errorString);
         if (error)

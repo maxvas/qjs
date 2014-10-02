@@ -18,6 +18,8 @@ private slots:
     void testParseObjectWithDouble();
     void testParseText1();
     void testParseText2();
+    void testParseText3();
+    void testParseText4();
     //ParsingBinaryData
     void testParseBinaryString();
     void testParseBinaryNumber();

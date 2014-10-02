@@ -80,6 +80,20 @@ void QJSParsingTest::testParseText2()
     QVERIFY2(b["title"]=="Привет, мир! (А тут будет \"з@ковыристый:\"\tтекст)", "Failure");
 }
 
+void QJSParsingTest::testParseText3()
+{
+    QString sample = "{\n}";
+    QJS a = QJS::fromJson(sample);
+    QVERIFY2(a.hasParsingError()==false, "Failure");
+}
+
+void QJSParsingTest::testParseText4()
+{
+    QString sample = "{\n}";
+    QJS a = QJS::fromJson(sample);
+    QVERIFY2(a==QJS::Null, "Failure");
+}
+
 void QJSParsingTest::testParseBinaryString()
 {
     QByteArray bytes;
