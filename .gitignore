@@ -1,6 +1,7 @@
 *.pro.user
 build-*
 build
+install
 bin
 *.prf
 *.o
