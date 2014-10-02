@@ -25,7 +25,7 @@ HEADERS += qjs.h\
     qjssharednode.h \
     QJSSharedNode \
     qjsmapping.h
-
+    
 unix {
     target.path = /usr/lib/qjs
     includes.path =  /usr/include/qjs
