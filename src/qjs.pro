@@ -27,7 +27,9 @@ HEADERS += qjs.h\
     qjsmapping.h
 
 unix {
-    target.path = /usr/lib
+    target.path = /usr/lib/qjs
+    includes.path =  /usr/include/qjs
+    includes.files = $$HEADERS
     INSTALLS += target
 }
 
