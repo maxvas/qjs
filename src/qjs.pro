@@ -45,21 +45,20 @@ defineReplace(findQtDir){
     }
     message(Enviroment variable QTDIR is empty. We will try to get it by parsing PATH variable)
     PATH = $$(PATH)
-    PATH_PARTS = $$split(PATH, :)
+	win32{
+		PATH_PARTS = $$split(PATH, ;)
+	}else{
+		PATH_PARTS = $$split(PATH, :)
+	}
     FOUND = $$find(PATH_PARTS, Qt.*bin$)
     FOUND = $$first(FOUND)
     isEmpty(FOUND){
         error("Can't extract QTDIR from PATH")
     }
-    names = $$split(FOUND, $${QMAKE_DIR_SEP})
-    QTDIR=
-    prev=
-    for(name, names) {
-        !isEmpty(prev){
-            QTDIR=$$QTDIR$${QMAKE_DIR_SEP}$$prev
-        }
-        prev=$$name
-    }
+	message($$FOUND)
+	FOUND2 = $${FOUND}$$QMAKE_DIR_SEP".."$$QMAKE_DIR_SEP
+	message($$FOUND2)
+    QTDIR=$$clean_path($$FOUND2)
     message(QTDIR=$$QTDIR)
     return($$QTDIR)
 }
