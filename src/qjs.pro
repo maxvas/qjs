@@ -27,7 +27,6 @@ HEADERS += qjs.h\
     QJS \
     QJSMapping
 
-message(QTDIR=$$(QTDIR))
 unix {
     target.path = /usr/lib
     includes.path =  /usr/include/qjs
@@ -39,12 +38,12 @@ unix {
 }
 prffile = $$(QTDIR)/mkspecs/features/qjs.prf
 unix{
-    feature.path = $$(QTDIR)/mkspecs/features
+    feature.path = $${QTDIR}/mkspecs/features
     feature.files = $$prffile
     feature.extra += echo "INCLUDEPATH += /usr/include/qjs" > $$prffile && echo "LIBS += -L/usr/lib -lqjs" >> $$prffile
 }
 win32{
-    feature.path = $$(QTDIR)/mkspecs/features
+    feature.path = $${QTDIR}/mkspecs/features
     feature.files = $$prffile
     feature.extra += echo "INCLUDEPATH += \"$$PWD/../install/lib\"" > $$prffile echo "LIBS += -L\"$$PWD/../install/lib\" -lqjs" >> $$prffile
 }
@@ -58,4 +57,4 @@ unix {
     QMAKE_CLEAN += -r $$PWD/../install/lib
     QMAKE_CLEAN += -r $$PWD/../install/include
 }
-QMAKE_CLEAN += $$(QTDIR)/mkspecs/features/qjs.prf
+QMAKE_CLEAN += $${QTDIR}/mkspecs/features/qjs.prf
