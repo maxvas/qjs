@@ -43,10 +43,10 @@ Debug:UI_DIR = $${build_dir}/debug/.ui
 #STEP2: make feature
 
 unix{
-    feature.commands += echo "INCLUDEPATH += /usr/include/qjs" > $$OUT_PWD/qjs.prf && echo "LIBS += -L/usr/lib -lqjs" >> $$OUT_PWD/qjs.prf
+    feature.commands += echo "INCLUDEPATH += /usr/include/qjs" > qjs.prf && echo "LIBS += -L/usr/lib -lqjs" >> qjs.prf
 }
 win32{
-    feature.commands += echo "INCLUDEPATH += \"$$PWD/../install/lib\"" > $$OUT_PWD/qjs.prf & echo "LIBS += -L\"$$PWD/../install/lib\" -lqjs" >> $$OUT_PWD/qjs.prf
+    feature.commands += echo "INCLUDEPATH += \"$$PWD/../install/lib\"" > qjs.prf & echo "LIBS += -L\"$$PWD/../install/lib\" -lqjs" >> qjs.prf
 }
 
 QMAKE_EXTRA_TARGETS += feature
@@ -62,7 +62,7 @@ unix {
 }
 features_dir = $$(QTDIR)/mkspecs/features
 qjs_feature.path = $$(QTDIR)/mkspecs/features
-qjs_feature.files = $$OUT_PWD/qjs.prf
+qjs_feature.files = qjs.prf
 INSTALLS += target includes qjs_feature
 QMAKE_CLEAN += qjs.prf
 QMAKE_CLEAN += -r $${DESTDIR}/*$${TARGET}*
