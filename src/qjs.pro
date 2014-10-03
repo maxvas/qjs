@@ -42,15 +42,9 @@ Debug:UI_DIR = $${build_dir}/debug/.ui
 
 #STEP2: make feature
 
-unix{
-    feature.commands += echo "INCLUDEPATH += /usr/include/qjs" > qjs.prf && echo "LIBS += -L/usr/lib -lqjs" >> qjs.prf
-}
-win32{
-    feature.commands += echo "INCLUDEPATH += \"$$PWD/../install/lib\"" > qjs.prf & echo "LIBS += -L\"$$PWD/../install/lib\" -lqjs" >> qjs.prf
-}
-
-QMAKE_EXTRA_TARGETS += feature
+#QMAKE_EXTRA_TARGETS += feature
 #STEP3: make install
+message(QTDIR=$$(QTDIR))
 unix {
     target.path = /usr/lib
     includes.path =  /usr/include/qjs
@@ -60,10 +54,18 @@ unix {
     includes.path =  $$PWD/../install/include
     includes.files = $$HEADERS
 }
-features_dir = $$(QTDIR)/mkspecs/features
-qjs_feature.path = $$(QTDIR)/mkspecs/features
-qjs_feature.files = qjs.prf
-INSTALLS += target includes qjs_feature
+#qjs_feature.path = $$(QTDIR)/mkspecs/features
+#qjs_feature.files = qjs.prf
+prffile = $$(QTDIR)/mkspecs/features/qjs.prf
+unix{
+	feature.path = $$(QTDIR)/mkspecs/features
+	feature.files = prffile
+	feature.extra += echo "INCLUDEPATH += /usr/include/qjs" > $$prffile && echo "LIBS += -L/usr/lib -lqjs" >> $$prffile
+}
+win32{
+    feature.extra += echo "INCLUDEPATH += \"$$PWD/../install/lib\"" > $$prffile echo "LIBS += -L\"$$PWD/../install/lib\" -lqjs" >> $$prffile
+}
+INSTALLS += target includes feature
 QMAKE_CLEAN += qjs.prf
 QMAKE_CLEAN += -r $${DESTDIR}/*$${TARGET}*
 unix {
