@@ -1,0 +1,14 @@
+СИСТЕМНЫЕ ТРЕБОВАНИЯ:
+	1. Операционная система UNIX или WINDOWS
+	2. Qt 5.0 или выше
+	3. GCC 4.7 и выше или MSVC2010 и выше
+
+УСТАВНОКА:
+	OS UNIX(GCC):
+		qmake
+		make
+		make install
+	OS WINDOWS (MSVC):
+		qmake
+		make
+		make install
