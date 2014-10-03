@@ -27,7 +27,30 @@ HEADERS += qjs.h\
     QJS \
     QJSMapping
     
+build_dir = $${PWD}/../build
+message(Bilding files will be placed in $$build_dir)
 
+Release:OBJECTS_DIR = $${build_dir}/release/.obj
+Release:MOC_DIR = $${build_dir}/release/.moc
+Release:RCC_DIR = $${build_dir}/release/.rcc
+Release:UI_DIR = $${build_dir}/release/.ui
+
+Debug:OBJECTS_DIR = $${build_dir}/debug/.obj
+Debug:MOC_DIR = $${build_dir}/debug/.moc
+Debug:RCC_DIR = $${build_dir}/debug/.rcc
+Debug:UI_DIR = $${build_dir}/debug/.ui
+
+#STEP2: make feature
+
+unix{
+    feature.commands += echo "INCLUDEPATH += /usr/include/qjs" > $$OUT_PWD/qjs.prf && echo "LIBS += -L/usr/lib -lqjs" >> $$OUT_PWD/qjs.prf
+}
+win32{
+    feature.commands += echo "INCLUDEPATH += \"$$PWD/../install/lib\"" > $$OUT_PWD/qjs.prf & echo "LIBS += -L\"$$PWD/../install/lib\" -lqjs" >> $$OUT_PWD/qjs.prf
+}
+
+QMAKE_EXTRA_TARGETS += feature
+#STEP3: make install
 unix {
     target.path = /usr/lib
     includes.path =  /usr/include/qjs
@@ -39,16 +62,10 @@ unix {
 }
 features_dir = $$(QTDIR)/mkspecs/features
 qjs_feature.path = $$(QTDIR)/mkspecs/features
-qjs_feature.files = qjs.prf
-unix{
-        qjs_feature.extra += echo "INCLUDEPATH += /usr/include/qjs" > qjs.prf && echo "LIBS += -L/usr/lib -lqjs" >> qjs.prf
-}
-win32{
-        qjs_feature.extra += echo "INCLUDEPATH += \"$$PWD/../install/lib\"" > qjs.prf & echo "LIBS += -L\"$$PWD/../install/lib\" -lqjs" >> qjs.prf
-}
+qjs_feature.files = $$OUT_PWD/qjs.prf
 INSTALLS += target includes qjs_feature
 QMAKE_CLEAN += qjs.prf
-QMAKE_CLEAN += -r $${DESTDIR}
+QMAKE_CLEAN += -r $${DESTDIR}/*$${TARGET}*
 unix {
     QMAKE_CLEAN += /usr/lib/*$${TARGET}*
     QMAKE_CLEAN += -r /usr/include/qjs
@@ -57,4 +74,3 @@ unix {
     QMAKE_CLEAN += -r $$PWD/../install/include
 }
 QMAKE_CLEAN += $$(QTDIR)/mkspecs/features/qjs.prf
-message($${TARGET})
