@@ -27,8 +27,9 @@ HEADERS += qjs.h\
     QJS \
     QJSMapping
     
+
 unix {
-    target.path = /usr/lib/qjs
+    target.path = /usr/lib
     includes.path =  /usr/include/qjs
     includes.files = $$HEADERS
 } else {
@@ -40,13 +41,20 @@ features_dir = $$(QTDIR)/mkspecs/features
 qjs_feature.path = $$(QTDIR)/mkspecs/features
 qjs_feature.files = qjs.prf
 unix{
-	qjs_feature.extra += echo "INCLUDEPATH += /usr/include/qjs" > qjs.prf && echo "LIBS += -L/usr/lib/qjs -lqjs" >> qjs.prf
+        qjs_feature.extra += echo "INCLUDEPATH += /usr/include/qjs" > qjs.prf && echo "LIBS += -L/usr/lib -lqjs" >> qjs.prf
 }
 win32{
         qjs_feature.extra += echo "INCLUDEPATH += \"$$PWD/../install/lib\"" > qjs.prf & echo "LIBS += -L\"$$PWD/../install/lib\" -lqjs" >> qjs.prf
 }
-qjsprf.path = $$(QTDIR)/mkspecs/features
-qjsprf.files = qjs.prf
-INSTALLS += target includes qjs_feature qjsprf
+INSTALLS += target includes qjs_feature
 QMAKE_CLEAN += qjs.prf
 QMAKE_CLEAN += -r $${DESTDIR}
+unix {
+    QMAKE_CLEAN += /usr/lib/*$${TARGET}*
+    QMAKE_CLEAN += -r /usr/include/qjs
+} else {
+    QMAKE_CLEAN += -r $$PWD/../install/lib
+    QMAKE_CLEAN += -r $$PWD/../install/include
+}
+QMAKE_CLEAN += $$(QTDIR)/mkspecs/features/qjs.prf
+message($${TARGET})
