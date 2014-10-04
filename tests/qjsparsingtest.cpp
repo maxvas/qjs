@@ -110,43 +110,32 @@ void QJSParsingTest::testParseEmptyArray2()
 
 void QJSParsingTest::testParseBinaryString()
 {
-    QByteArray bytes;
-    QDataStream out(&bytes,QIODevice::WriteOnly);
-    QDataStream in(&bytes,QIODevice::ReadOnly);
-
     QJS a = "test тест 123";
-//    QJS a = "test";
-    a.toBinaryData(&out);
-
-    QJS b=QJS::fromBinaryData(&in);
+    QByteArray bytes= a.toByteArray();
+    QJS b = QJS::fromByteArray(bytes);
     QVERIFY2(a==b, "Failure");
 }
 
 void QJSParsingTest::testParseBinaryNumber()
 {
-    QByteArray bytes;
-
-    QDataStream out(&bytes,QIODevice::WriteOnly);
-    QDataStream in(&bytes,QIODevice::ReadOnly);
-
     QJS aint=4;
-    aint.toBinaryData(&out);
-    QJS bint=QJS::fromBinaryData(&in);
+    QByteArray bytes = aint.toByteArray();
+    QJS bint=QJS::fromByteArray(bytes);
     bytes.clear();
 
     QJS along=(long long)4346346;
-    along.toBinaryData(&out);
-    QJS blong=QJS::fromBinaryData(&in);
+    bytes = along.toByteArray();
+    QJS blong=QJS::fromByteArray(bytes);
     bytes.clear();
 
     QJS adouble1=43.34;
-    adouble1.toBinaryData(&out);
-    QJS bdouble1=QJS::fromBinaryData(&in);
+    bytes = adouble1.toByteArray();
+    QJS bdouble1=QJS::fromByteArray(bytes);
     bytes.clear();
 
     QJS adouble2=43e-3;
-    adouble2.toBinaryData(&out);
-    QJS bdouble2=QJS::fromBinaryData(&in);
+    bytes = adouble2.toByteArray();
+    QJS bdouble2=QJS::fromByteArray(bytes);
     bytes.clear();
 
     QVERIFY2(aint==bint&&along==blong&&adouble1==bdouble1&&adouble2==bdouble2, "Failure");
@@ -161,11 +150,8 @@ void QJSParsingTest::testParseBinaryObject()
     a["string"]="test123: тестовая __&*$%__ строка";
     a["bool"]=false;
 
-    QByteArray bytes;
-    QDataStream out(&bytes,QIODevice::WriteOnly);
-    QDataStream in(&bytes,QIODevice::ReadOnly);
-    a.toBinaryData(&out);
-    QJS b=QJS::fromBinaryData(&in);
+    QByteArray bytes = a.toByteArray();
+    QJS b=QJS::fromByteArray(bytes);
     QVERIFY2(a==b, "Failure");
 }
 
@@ -178,11 +164,8 @@ void QJSParsingTest::testParseBinaryArray()
     a.append("test123: тестовая __&*$%__ строка");
     a.append(true);
 
-    QByteArray bytes;
-    QDataStream out(&bytes,QIODevice::WriteOnly);
-    QDataStream in(&bytes,QIODevice::ReadOnly);
-    a.toBinaryData(&out);
-    QJS b=QJS::fromBinaryData(&in);
+    QByteArray bytes = a.toByteArray();
+    QJS b=QJS::fromByteArray(bytes);
     QVERIFY2(a==b, "Failure");
 }
 
@@ -204,11 +187,8 @@ void QJSParsingTest::testParseBinaryComplex()
     a_complex["array"].append("test123: тестовая __&*$%__ строка");
     a_complex["array"].append(a);
 
-    QByteArray bytes;
-    QDataStream out(&bytes,QIODevice::WriteOnly);
-    QDataStream in(&bytes,QIODevice::ReadOnly);
-    a_complex.toBinaryData(&out);
-    QJS b=QJS::fromBinaryData(&in);
+    QByteArray bytes = a_complex.toByteArray();
+    QJS b=QJS::fromByteArray(bytes);
     QVERIFY2(a_complex==b, "Failure");
 }
 

@@ -20,7 +20,7 @@ private:
 
 signals:
     void subscribeAdded(QJSSharedNode *sn);
-    void changed(QJS *address, QString operation, QJS *newData, QJS *oldData);
+    void changed(QByteArray address, QString operation, QByteArray newData, QByteArray oldData);
 
 public slots:
     void addSubscribe(QJSSharedNode *sn);

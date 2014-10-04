@@ -1,6 +1,7 @@
 #include "qjs.h"
 #include "qjsleakstest.h"
 #include <QMutexLocker>
+#include <QMetaMethod>
 
 QJS::const_iterator QJS::begin() const
 {
@@ -1218,7 +1219,15 @@ void QJS::parsingError(QString message, int line, int column, bool &error, QStri
 
 void QJS::_changed(QJS *address, QString operation, QJS *newData, QJS *oldData)
 {
-    emit dataChanged(address, operation, newData, oldData);
+    static const QMetaMethod dataChangedSignal = QMetaMethod::fromSignal(&QJS::dataChanged);
+    if (isSignalConnected(dataChangedSignal))
+    {
+        QByteArray addressData = address->toByteArray();
+        QByteArray newDataData = newData->toByteArray();
+        QByteArray oldDataData = oldData->toByteArray();
+
+        emit dataChanged(addressData, operation, newDataData, oldDataData);
+    }
     if (_parent==0)
     {
         delete newData;
@@ -1259,19 +1268,21 @@ void QJS::_changed(QJS *address, QString operation, QJS *newData, QJS *oldData)
     _parent->_changed(address, operation, newData, oldData);
 }
 
-bool QJS::applyChange(QJS *address, QString operation, QJS *newData, QJS *oldData)
+bool QJS::applyChange(QByteArray addressData, QString operation, QByteArray newDataData, QByteArray oldDataData)
 {
-    (void)oldData;
+    (void)oldDataData;
+    QJS address = QJS::fromByteArray(addressData);
+    QJS newData = QJS::fromByteArray(newDataData);
     bool isSignalsEnabled = signalsEnabled();
     enableSignals(false);
-    QJS &node = getByAddress(*address);
+    QJS &node = getByAddress(address);
     if (operation=="assign")
     {
-        node.set(*newData);
+        node.set(newData);
     }
     if (operation=="prepend")
     {
-        node.prepend(*newData);
+        node.prepend(newData);
     }
     enableSignals(isSignalsEnabled);
     return true;
@@ -1305,10 +1316,10 @@ QString QJS::escapeString(QString str)
     return res;
 }
 
-QJS *QJS::parseBinaryData(QDataStream *in,bool &error)
+QJS *QJS::parseBinaryData(QDataStream &in,bool &error)
 {
     qint8 type;
-    *in>>type;
+    in>>type;
     QJS* qjs=new QJS();
 
     switch ((Type)type)
@@ -1316,16 +1327,16 @@ QJS *QJS::parseBinaryData(QDataStream *in,bool &error)
     case QJS::Bool:
     {
         bool data;
-        *in>>data;
+        in>>data;
         qjs->set(data);
         return qjs;
     }
     case QJS::Number:
          qint8 ntype;
-         *in>>ntype;
+         in>>ntype;
         if (((QVariant::Type)ntype)==QVariant::Double){
             double data;
-            *in>>data;
+            in>>data;
             qjs->set(data);
 //            (*qjs)=data;
             return qjs;
@@ -1333,22 +1344,22 @@ QJS *QJS::parseBinaryData(QDataStream *in,bool &error)
 
         if (((QVariant::Type)ntype)==QVariant::Int){
             qint32 data;
-            *in>>data;
+            in>>data;
             qjs->set((int)data);
             return qjs;
         }
         if (((QVariant::Type)ntype)==QVariant::LongLong){
             qint64 data;
-            *in>>data;
+            in>>data;
             qjs->set((long long)data);
             return qjs;
         }
     case QJS::String:
     {
         qint32 len;
-        *in>>len;
+        in>>len;
         char* str=new char[len];
-        int bnum=in->readRawData(str,len);
+        int bnum=in.readRawData(str,len);
         if(bnum<0){
             error=true;
             return qjs;
@@ -1361,17 +1372,17 @@ QJS *QJS::parseBinaryData(QDataStream *in,bool &error)
     case QJS::Object:
     {
         qint16 size,len;
-        *in>>size;
+        in>>size;
         for(int i=0;i<(int)size;i++){
-            *in>>len;
+            in>>len;
             char* str=new char[len];
-            int bnum=in->readRawData(str,(int)len);
+            int bnum=in.readRawData(str,(int)len);
             if(bnum<0){
                 error=true;
                 return qjs;
             }
             else{
-                QJS* q=QJS::parseBinaryData(in,error);
+                QJS *q=QJS::parseBinaryData(in,error);
                 QString key=QString::fromUtf8(str,len);
                 qjs->set(key,q);
             }
@@ -1381,10 +1392,10 @@ QJS *QJS::parseBinaryData(QDataStream *in,bool &error)
     case QJS::Array:
     {
         qint32 size;
-        *in>>size;
+        in>>size;
         for (int i=0; i<(int)size; i++)
         {
-            QJS* q=QJS::parseBinaryData(in,error);
+            QJS *q=QJS::parseBinaryData(in,error);
             qjs->append(q);
         }
         return qjs;
@@ -1521,56 +1532,56 @@ QJS QJS::fromJson(QString str)
     return result;
 }
 
-void QJS::toBinaryData(QDataStream *out) const
+void QJS::toDataStream(QDataStream &out) const
 {
-    *out<<(qint8)(this->_type);
+    out<<(qint8)(this->_type);
     switch (this->_type)
     {
     case QJS::Bool:
     {
         bool b = _data.toBool();
-        *out<<b;
+        out<<b;
         break;
     }
     case QJS::Number:
     {
-        *out<<(qint8)_data.type();
+        out<<(qint8)_data.type();
         if (_data.type()==QVariant::Double)
-            *out<<_data.toDouble();
+            out<<_data.toDouble();
         if (_data.type()==QVariant::Int)
-            *out<<(qint32)_data.toInt();
+            out<<(qint32)_data.toInt();
         if (_data.type()==QVariant::LongLong)
-            *out<<(qint64)_data.toInt();
+            out<<(qint64)_data.toInt();
         break;
     }
     case QJS::String:
     {
         QString string=_data.toString();
         int len=string.toUtf8().size();
-        *out<<(qint32)len;
-        out->writeRawData(string.toUtf8().data(),len);
+        out<<(qint32)len;
+        out.writeRawData(string.toUtf8().data(),len);
         break;
     }
     case QJS::Object:
     {
         QList<QString> keys = _objectData.keys();
-        *out<<(qint16)_objectData.size();
+        out<<(qint16)_objectData.size();
         qSort(keys);
         foreach (QString key, keys) {
             qint16 len=key.length();
 //            qint16 len=key.toUtf8().size();
-            *out<<len;
-            out->writeRawData(key.toUtf8().data(),len);
-            _objectData[key]->toBinaryData(out);
+            out<<len;
+            out.writeRawData(key.toUtf8().data(),len);
+            _objectData[key]->toDataStream(out);
         }
         break;
     }
     case QJS::Array:
     {
-        *out<<(qint32)this->size();
+        out<<(qint32)this->size();
         for (int i=0; i<this->size(); i++)
         {
-            _arrayData[i]->toBinaryData(out);
+            _arrayData[i]->toDataStream(out);
         }
         break;
     }
@@ -1581,7 +1592,7 @@ void QJS::toBinaryData(QDataStream *out) const
     }
 }
 
-QJS QJS::fromBinaryData(QDataStream *in)
+QJS QJS::fromDataStream(QDataStream &in)
 {
     //TODO: Сделать правильный вывод ошибок
     bool error = false;
@@ -1590,6 +1601,20 @@ QJS QJS::fromBinaryData(QDataStream *in)
     if(error)result._parsingErrorString = "Невалидные бинарные данные";
     result._doNotCopy = true;
     return result;
+}
+
+QByteArray QJS::toByteArray()
+{
+    QByteArray data;
+    QDataStream stream(&data,QIODevice::WriteOnly);
+    toDataStream(stream);
+    return data;
+}
+
+QJS QJS::fromByteArray(QByteArray data)
+{
+    QDataStream stream(&data,QIODevice::ReadOnly);
+    return QJS::fromDataStream(stream);
 }
 
 bool QJS::isParsingError()

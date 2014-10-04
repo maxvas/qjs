@@ -1,4 +1,6 @@
 #include "qjsbasetest.h"
+#include <QDataStream>
+#include <QByteArray>
 
 QJSBaseTest::QJSBaseTest(QObject *parent) :
     QObject(parent)
@@ -553,13 +555,19 @@ void QJSBaseTest::testComparison6()
     QVERIFY2(a==b, "Failure");
 }
 
-void QJSBaseTest::slotChanged(QJS *address, QString operation, QJS *newData, QJS *oldData)
+void QJSBaseTest::slotChanged(QByteArray addressData, QString operation, QByteArray newDataData, QByteArray oldDataData)
 {
     QJS change;
-    change["address"] = *address;
+    QDataStream addressStream(addressData);
+    QJS address = QJS::fromDataStream(addressStream);
+    QDataStream newDataStream(newDataData);
+    QJS newData = QJS::fromDataStream(newDataStream);
+    QDataStream oldDataStream(oldDataData);
+    QJS oldData = QJS::fromDataStream(oldDataStream);
+    change["address"] = address;
     change["operation"] = operation;
-    change["newData"] = *newData;
-    change["oldData"] = *oldData;
+    change["newData"] = newData;
+    change["oldData"] = oldData;
     this->changedData.append(change);
 }
 
@@ -584,7 +592,7 @@ void QJSBaseTest::testChanged1()
             "}";
     QJS data = QJS::fromJson(sample);
     data.enableSignals(true);
-    connect(&data, SIGNAL(dataChanged(QJS*,QString,QJS*,QJS*)), SLOT(slotChanged(QJS*,QString,QJS*,QJS*)));
+    connect(&data, SIGNAL(dataChanged(QByteArray,QString,QByteArray,QByteArray)), SLOT(slotChanged(QByteArray,QString,QByteArray,QByteArray)));
     data["params"]["a"] = 3;
     data["authors"].append("Alexander");
     data["params"]["b"] = 5;

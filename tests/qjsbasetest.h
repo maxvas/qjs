@@ -68,7 +68,7 @@ private slots:
     void testComparison5();
     void testComparison6();
     //Сигнал changed
-    void slotChanged(QJS* address, QString operation, QJS* newData, QJS* oldData);
+    void slotChanged(QByteArray addressData, QString operation, QByteArray newDataData, QByteArray oldDataData);
     void testChanged1();
     //Тест на size и clear
     void testArraySize4();

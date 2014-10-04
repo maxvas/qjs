@@ -14,10 +14,10 @@ QJSSharedNode::QJSSharedNode(QByteArray initData) :
         QJSSharedNode* sn = (QJSSharedNode*)nodePointer;
         if (sn!=this)
         {
-            connect(this, SIGNAL(dataChanged(QJS*,QString,QJS*,QJS*)), sn, SLOT(applyChange(QJS*,QString,QJS*,QJS*)));
-            connect(sn, SIGNAL(dataChanged(QJS*,QString,QJS*,QJS*)), this, SLOT(applyChange(QJS*,QString,QJS*,QJS*)));
-            connect(sn, SIGNAL(dataChanged(QJS*,QString,QJS*,QJS*)), this, SIGNAL(changed(QJS*,QString,QJS*,QJS*)));
-            connect(this, SIGNAL(dataChanged(QJS*,QString,QJS*,QJS*)), this, SIGNAL(changed(QJS*,QString,QJS*,QJS*)));
+            connect(this, SIGNAL(dataChanged(QByteArray,QString,QByteArray,QByteArray)), sn, SLOT(applyChange(QByteArray,QString,QByteArray,QByteArray)));
+            connect(sn, SIGNAL(dataChanged(QByteArray,QString,QByteArray,QByteArray)), this, SLOT(applyChange(QByteArray,QString,QByteArray,QByteArray)));
+            connect(sn, SIGNAL(dataChanged(QByteArray,QString,QByteArray,QByteArray)), this, SIGNAL(changed(QByteArray,QString,QByteArray,QByteArray)));
+            connect(this, SIGNAL(dataChanged(QByteArray,QString,QByteArray,QByteArray)), this, SIGNAL(changed(QByteArray,QString,QByteArray,QByteArray)));
             connect(this, SIGNAL(subscribeAdded(QJSSharedNode*)), sn, SLOT(addSubscribe(QJSSharedNode*)));
         }
     }

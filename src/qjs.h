@@ -172,8 +172,10 @@ public:
     //Парсинг
     QString toJson() const;
     static QJS fromJson(QString str);
-    void toBinaryData(QDataStream *out) const;
-    static QJS fromBinaryData(QDataStream *in);
+    void toDataStream(QDataStream &out) const;
+    static QJS fromDataStream(QDataStream &in);
+    QByteArray toByteArray();
+    static QJS fromByteArray(QByteArray data);
     bool isParsingError();
     bool hasParsingError();
     QString parsingErrorString();
@@ -237,18 +239,18 @@ private:
     static QJS *extractBool(QString str, int &pos, int &line, int &column, bool &error, QString &errorString);
     static QJS *extractNumber(QString str, int &pos, int &line, int &column, bool &error, QString &errorString);
     static QString escapeString(QString str);
-    static QJS *parseBinaryData(QDataStream *in, bool &error);
+    static QJS *parseBinaryData(QDataStream &in, bool &error);
 
     static void parsingError(QString message, int line, int column, bool &error, QString &errorString);
 
     void _changed(QJS* address, QString operation, QJS *newData, QJS *oldData);
 
 signals:
-    void dataChanged(QJS *address, QString operation, QJS *newData, QJS *oldData);
+    void dataChanged(QByteArray address, QString operation, QByteArray newData, QByteArray oldData);
 
 public slots:
     //Применить операцию изменения данных, получаемую из сигнала changed
-    bool applyChange(QJS* address, QString operation, QJS *newData, QJS *oldData);
+    bool applyChange(QByteArray addressData, QString operation, QByteArray newDataData, QByteArray oldDataData);
 };
 
 
