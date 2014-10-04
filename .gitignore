@@ -6,3 +6,5 @@ bin
 *.prf
 *.o
 moc*.cpp
+Makefile
+Makefile*

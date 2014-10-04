@@ -26,7 +26,6 @@ HEADERS += qjs.h\
     qjsmapping.h \
     QJS \
     QJSMapping
-    
 
 unix {
     target.path = /usr/lib
@@ -37,18 +36,47 @@ unix {
     includes.path =  $$PWD/../install/include
     includes.files = $$HEADERS
 }
-features_dir = $$(QTDIR)/mkspecs/features
-qjs_feature.path = $$(QTDIR)/mkspecs/features
-qjs_feature.files = qjs.prf
+defineReplace(findQtDir){
+    QTDIR=$$(QTDIR)
+    !isEmpty(QTDIR){
+        #message("Enviroment variable QTDIR has been setted. So, we simple use it")
+        #message(QTDIR=$${QTDIR})
+        return($${QTDIR});
+    }
+    message(Enviroment variable QTDIR is empty. We will try to get it by parsing PATH variable)
+    PATH = $$(PATH)
+	win32{
+		PATH_PARTS = $$split(PATH, ;)
+	}else{
+		PATH_PARTS = $$split(PATH, :)
+	}
+    FOUND = $$find(PATH_PARTS, Qt.*bin$)
+    FOUND = $$first(FOUND)
+    isEmpty(FOUND){
+        error("Can't extract QTDIR from PATH")
+    }
+	message($$FOUND)
+	FOUND2 = $${FOUND}$$QMAKE_DIR_SEP".."$$QMAKE_DIR_SEP
+	message($$FOUND2)
+    QTDIR=$$clean_path($$FOUND2)
+    message(QTDIR=$$QTDIR)
+    return($$QTDIR)
+}
+QTDIR=$$findQtDir()
+prffile = $${QTDIR}/mkspecs/features/qjs.prf
 unix{
-        qjs_feature.extra += echo "INCLUDEPATH += /usr/include/qjs" > qjs.prf && echo "LIBS += -L/usr/lib -lqjs" >> qjs.prf
+    feature.path = $${QTDIR}/mkspecs/features
+    feature.files = $$prffile
+    feature.extra += echo "INCLUDEPATH += /usr/include/qjs" > $$prffile && echo "LIBS += -L/usr/lib -lqjs" >> $$prffile
 }
 win32{
-        qjs_feature.extra += echo "INCLUDEPATH += \"$$PWD/../install/lib\"" > qjs.prf & echo "LIBS += -L\"$$PWD/../install/lib\" -lqjs" >> qjs.prf
+    feature.path = $${QTDIR}/mkspecs/features
+    feature.files = $$prffile
+    feature.extra += echo "INCLUDEPATH += \"$$PWD/../install/lib\"" > $$prffile echo "LIBS += -L\"$$PWD/../install/lib\" -lqjs" >> $$prffile
 }
-INSTALLS += target includes qjs_feature
+INSTALLS += target includes feature
 QMAKE_CLEAN += qjs.prf
-QMAKE_CLEAN += -r $${DESTDIR}
+QMAKE_CLEAN += -r $${DESTDIR}/*$${TARGET}*
 unix {
     QMAKE_CLEAN += /usr/lib/*$${TARGET}*
     QMAKE_CLEAN += -r /usr/include/qjs
@@ -56,5 +84,4 @@ unix {
     QMAKE_CLEAN += -r $$PWD/../install/lib
     QMAKE_CLEAN += -r $$PWD/../install/include
 }
-QMAKE_CLEAN += $$(QTDIR)/mkspecs/features/qjs.prf
-message($${TARGET})
+QMAKE_CLEAN += $${QTDIR}/mkspecs/features/qjs.prf
