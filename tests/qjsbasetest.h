@@ -70,6 +70,7 @@ private slots:
     //Сигнал changed
     void slotChanged(QByteArray addressData, QString operation, QByteArray newDataData, QByteArray oldDataData);
     void testChanged1();
+    void testChanged2();//remove
     //Тест на size и clear
     void testArraySize4();
     //Тест на изменение типа qjs

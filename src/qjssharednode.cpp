@@ -19,6 +19,8 @@ QJSSharedNode::QJSSharedNode(QByteArray initData) :
             connect(sn, SIGNAL(dataChanged(QByteArray,QString,QByteArray,QByteArray)), this, SIGNAL(changed(QByteArray,QString,QByteArray,QByteArray)));
             connect(this, SIGNAL(dataChanged(QByteArray,QString,QByteArray,QByteArray)), this, SIGNAL(changed(QByteArray,QString,QByteArray,QByteArray)));
             connect(this, SIGNAL(subscribeAdded(QJSSharedNode*)), sn, SLOT(addSubscribe(QJSSharedNode*)));
+            connect(sn, SIGNAL(dataChanged(QByteArray,QString,QByteArray,QByteArray)), this, SLOT(myChanged(QByteArray,QString,QByteArray,QByteArray)));
+            connect(this, SIGNAL(dataChanged(QByteArray,QString,QByteArray,QByteArray)), sn, SLOT(myChanged(QByteArray,QString,QByteArray,QByteArray)));
         }
     }
     enableSignals();
@@ -30,15 +32,6 @@ QJSSharedNode::QJSSharedNode():
 {
     //_allNodes.assign(QJS::fromJson(allNodes));
     _subscribes.append((long long) this);
-    foreach (QJS node, _subscribes) {
-        long long nodePointer = node.toLongLong();
-        QJSSharedNode* sn = (QJSSharedNode*)nodePointer;
-        if (sn!=this)
-        {
-            connect(this, SIGNAL(dataChanged(QJS*,QString,QJS*,QJS*)), sn, SLOT(applyChange(QJS*,QString,QJS*,QJS*)));
-            connect(this, SIGNAL(subscribeAdded(QJSSharedNode*)), SLOT(addSubscribe(QJSSharedNode*)));
-        }
-    }
     enableSignals();
     emit subscribeAdded(this);
 }
@@ -64,4 +57,10 @@ QString QJSSharedNode::subscribes()
 void QJSSharedNode::addSubscribe(QJSSharedNode *sn)
 {
     _subscribes.append((long long)sn);
+}
+
+void QJSSharedNode::myChanged(QByteArray address, QString operation, QByteArray newData, QByteArray oldData)
+{
+    //TODO: Выяснить, почему не работает сигнал chenged со всеми аргументами. Сейчас работает только по-тупому. changed()
+    emit changed();
 }

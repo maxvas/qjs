@@ -568,6 +568,7 @@ void QJSBaseTest::slotChanged(QByteArray addressData, QString operation, QByteAr
     change["operation"] = operation;
     change["newData"] = newData;
     change["oldData"] = oldData;
+//    qDebug()<<change.toJson();
     this->changedData.append(change);
 }
 
@@ -592,13 +593,48 @@ void QJSBaseTest::testChanged1()
             "}";
     QJS data = QJS::fromJson(sample);
     data.enableSignals(true);
+    this->changedData = QJS::null();
     connect(&data, SIGNAL(dataChanged(QByteArray,QString,QByteArray,QByteArray)), SLOT(slotChanged(QByteArray,QString,QByteArray,QByteArray)));
     data["params"]["a"] = 3;
     data["authors"].append("Alexander");
     data["params"]["b"] = 5;
     data["authors"] = QJS::Null;
     int changesCount = this->changedData.length();
-    qDebug()<<changedData.toJson();
+    //qDebug()<<changedData.toJson();
+    QVERIFY2(changesCount==4, "Failure");
+}
+
+void QJSBaseTest::testChanged2()
+{
+    //TODO сделать отдельны класс тестов на измененния и реализовать все варинаты
+    QString sample = "{\n"
+            "    \"authors\": [\n"
+            "        null,\n"
+            "        null,\n"
+            "        \"Max\",\n"
+            "        null,\n"
+            "        \"Ann\",\n"
+            "        null,\n"
+            "        null,\n"
+            "        \"Vas\"\n"
+            "    ],\n"
+            "    \"name\": \"paper\",\n"
+            "    \"title\": \"Hello world!\",\n"
+            "    \"params\": {"
+            "        \"a\":4"
+            "    }"
+            "}";
+    QJS data = QJS::fromJson(sample);
+    data.enableSignals(true);
+    this->changedData = QJS::null();
+    connect(&data, SIGNAL(dataChanged(QByteArray,QString,QByteArray,QByteArray)), SLOT(slotChanged(QByteArray,QString,QByteArray,QByteArray)));
+    int changesCount = 0;
+    data["params"]["a"].remove();
+    data["authors"].remove(7);
+    data["authors"][2].remove();
+    data.remove("title");
+    changesCount = this->changedData.length();
+//    qDebug()<<changedData.toJson();
     QVERIFY2(changesCount==4, "Failure");
 }
 

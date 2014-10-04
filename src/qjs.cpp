@@ -920,18 +920,46 @@ void QJS::prepend(QJS::Type type)
 
 void QJS::remove(int index)
 {
+    QJS *oldData, *newData, *address;
+    if (_signalsEnabled)
+    {
+        oldData = new QJS();
+        oldData->set(this->get(index));
+    }
     if (_type==QJS::Array)
     {
         _arrayData.remove(index);
         this->_size = _arrayData.size();
     }
+    //Обработка сигналов
+    if (_signalsEnabled)
+    {
+        newData = new QJS(QJS::Null);
+        address = new QJS(QJS::Array);
+        address->append(index);
+        _changed(address, "remove", newData, oldData);
+    }
 }
 
 void QJS::remove(QString key)
 {
+    QJS *oldData, *newData, *address;
+    if (_signalsEnabled)
+    {
+        oldData = new QJS();
+        oldData->set(this->get(key));
+    }
     if (_type==QJS::Object)
     {
         _objectData.remove(key);
+    }
+    //Обработка сигналов
+    if (_signalsEnabled)
+    {
+        newData = new QJS(QJS::Null);
+        address = new QJS(QJS::Array);
+        address->append(key);
+        _changed(address, "remove", newData, oldData);
     }
 }
 
@@ -944,7 +972,7 @@ void QJS::remove()
         _parent->remove(_index);
         return;
     case QJS::Object:
-        _parent->_objectData.remove(_key);
+        _parent->remove(_key);
         return;
     default:
         return;
@@ -1270,12 +1298,16 @@ void QJS::_changed(QJS *address, QString operation, QJS *newData, QJS *oldData)
 
 bool QJS::applyChange(QByteArray addressData, QString operation, QByteArray newDataData, QByteArray oldDataData)
 {
+    //TODO: вызывать ее для всех non-const функций
+    //P.S. заодно проверить везде ли где надо прописан const :=)
+    //TODO сделать класс для типа изменения
     (void)oldDataData;
     QJS address = QJS::fromByteArray(addressData);
     QJS newData = QJS::fromByteArray(newDataData);
     bool isSignalsEnabled = signalsEnabled();
     enableSignals(false);
     QJS &node = getByAddress(address);
+    //TODO сделать switch
     if (operation=="assign")
     {
         node.set(newData);
@@ -1283,6 +1315,10 @@ bool QJS::applyChange(QByteArray addressData, QString operation, QByteArray newD
     if (operation=="prepend")
     {
         node.prepend(newData);
+    }
+    if (operation=="remove")
+    {
+        node.remove();
     }
     enableSignals(isSignalsEnabled);
     return true;

@@ -21,9 +21,11 @@ private:
 signals:
     void subscribeAdded(QJSSharedNode *sn);
     void changed(QByteArray address, QString operation, QByteArray newData, QByteArray oldData);
+    void changed();
 
 public slots:
     void addSubscribe(QJSSharedNode *sn);
+    void myChanged(QByteArray address, QString operation, QByteArray newData, QByteArray oldData);
 
 };
 
