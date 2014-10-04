@@ -65,12 +65,12 @@ defineReplace(findQtDir){
 QTDIR=$$findQtDir()
 prffile = $${QTDIR}/mkspecs/features/qjs.prf
 unix{
-    feature.path = $${QTDIR}/mkspecs/features
+    feature.path = $${OUT_PWD}
     feature.files = $$prffile
     feature.extra += echo "INCLUDEPATH += /usr/include/qjs" > $$prffile && echo "LIBS += -L/usr/lib -lqjs" >> $$prffile
 }
 win32{
-    feature.path = $${QTDIR}/mkspecs/features
+    feature.path = $${OUT_PWD}
     feature.files = $$prffile
     feature.extra += echo "INCLUDEPATH += \"$$PWD/../install/lib\"" > $$prffile echo "LIBS += -L\"$$PWD/../install/lib\" -lqjs" >> $$prffile
 }
