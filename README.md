@@ -20,7 +20,7 @@ QJS состоит из двух основных классов:
 
 В UNIX установка QJS выглядит следующим образом:
 
-	git clone https://github.com/max-vas/qjs
+	git clone https://github.com/maxvas/qjs
 	cd qjs
 	qmake
 	make install
@@ -28,7 +28,7 @@ QJS состоит из двух основных классов:
 
 В Windows установка QJS производится следующими командами:
 
-	git clone https://github.com/max-vas/qjs
+	git clone https://github.com/maxvas/qjs
 	cd qjs
 	qmake
 	nmake install
