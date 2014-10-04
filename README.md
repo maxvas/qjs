@@ -23,7 +23,6 @@ QJS состоит из двух основных классов:
 	git clone https://github.com/max-vas/qjs
 	cd qjs
 	qmake
-	make
 	make install
 
 
@@ -32,6 +31,11 @@ QJS состоит из двух основных классов:
 	git clone https://github.com/max-vas/qjs
 	cd qjs
 	qmake
-	nmake
 	nmake install
 
+Удаление
+--------
+
+Для удаления библиотеки из вашей системы выполните команду:
+
+	make clean
