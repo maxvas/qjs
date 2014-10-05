@@ -72,7 +72,7 @@ unix{
 win32{
     feature.path = $${OUT_PWD}
     feature.files = $$prffile
-    feature.extra += echo "INCLUDEPATH += \"$$PWD/../install/lib\"" > $$prffile echo "LIBS += -L\"$$PWD/../install/lib\" -lqjs" >> $$prffile
+    feature.extra += echo "INCLUDEPATH += \"$$PWD/../install/include\"" > $$prffile && echo "LIBS += -L\"$$PWD/../install/lib\" -lqjs" >> $$prffile
 }
 INSTALLS += target includes feature
 QMAKE_CLEAN += qjs.prf
