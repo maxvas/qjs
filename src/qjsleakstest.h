@@ -2,8 +2,9 @@
 #define QJSLEAKSTEST_H
 
 #include <QMutex>
+#include "qjs_global.h"
 
-class QJSLeaksTest
+class QJSSHARED_EXPORT QJSLeaksTest
 {
 public:
     static QJSLeaksTest* instance()

@@ -31,7 +31,6 @@ QJS::QJS(QJS *parent, QJS::Type desirebleParentType)
     _desirebleParentType = desirebleParentType;
     _exists = false;
     _index = -1;
-    _size = 0;
     if (parent!=0)
     {
         _signalsEnabled = parent->signalsEnabled();
@@ -332,7 +331,6 @@ void QJS::set(const QJS &val)
         }
         //val.mutex.unlock();
         this->setType(QJS::Array);
-        this->_size = _arrayData.size();
         break;
     default:
         break;
@@ -380,7 +378,6 @@ void QJS::set(QString name, QJS *val)
     }
     setType(QJS::Object);
     _objectData[name] = val;
-    _size = _arrayData.size();
 }
 
 void QJS::set(int index, QJS *val)
@@ -395,7 +392,6 @@ void QJS::set(int index, QJS *val)
         _arrayData.push_back(0);
     }
     _arrayData[index] = val;
-    _size = _arrayData.size();
 }
 
 QJS::Type QJS::type() const
@@ -486,7 +482,7 @@ QString QJS::toJson() const
             if (_arrayData[i]->_type==QJS::String)
                 value = "\"" + value + "\"";
             result += "    " + value.replace("\n", "\n    ");
-            if (i<_size-1)
+            if (i<size()-1)
                 result += ",\n";
             else
                 result += "\n";
@@ -522,7 +518,6 @@ void QJS::clear()
     }
     _nonExistsObjects.clear();
     _arrayData.clear();
-    _size=0;
 }
 
 bool QJS::operator==(const QJS &other) const
@@ -540,9 +535,9 @@ bool QJS::operator==(const QJS &other) const
         return this->_data==other._data;
     case QJS::Array:
     {
-        if (this->_size!=other._size)
+        if (this->size()!=other.size())
             return false;
-        for (int i=0; i<_size; i++)
+        for (int i=0; i<size(); i++)
         {
             QJS &a = *this->_arrayData[i];
             const QJS &b = *other._arrayData[i];
@@ -749,53 +744,52 @@ int QJS::count() const
 
 void QJS::append(bool value)
 {
-    (*this).get(_size).set(value);
+    (*this).get(size()).set(value);
 }
 
 void QJS::append(int value)
 {
-    (*this).get(_size).set(value);
+    (*this).get(size()).set(value);
 }
 
 void QJS::append(double value)
 {
-    (*this).get(_size).set(value);
+    (*this).get(size()).set(value);
 }
 
 void QJS::append(long long value)
 {
-    (*this).get(_size).set(value);
+    (*this).get(size()).set(value);
 }
 
 void QJS::append(const char *value)
 {
-    (*this).get(_size).set(value);
+    (*this).get(size()).set(value);
 }
 
 void QJS::append(QString value)
 {
-    (*this).get(_size).set(value);
+    (*this).get(size()).set(value);
 }
 
 void QJS::append(QJS &value)
 {
-    (*this).get(_size).set(value);
+    (*this).get(size()).set(value);
 }
 
 void QJS::append(QJS *value)
 {
-    this->set(_size, value);
+    this->set(size(), value);
 }
 
 void QJS::append(QJS::Type type)
 {
-    (*this).get(_size).set(type);
+    (*this).get(size()).set(type);
 }
 
 void QJS::prepend(bool value)
 {
     _arrayData.prepend(new QJS(value));
-    _size = _arrayData.size();
     QJS *oldData, *newData, *address;
     if (_signalsEnabled)
     {
@@ -809,7 +803,6 @@ void QJS::prepend(bool value)
 void QJS::prepend(int value)
 {    
     _arrayData.prepend(new QJS(value));
-    _size = _arrayData.size();
     QJS *oldData, *newData, *address;
     if (_signalsEnabled)
     {
@@ -823,7 +816,6 @@ void QJS::prepend(int value)
 void QJS::prepend(double value)
 {
     _arrayData.prepend(new QJS(value));
-    _size = _arrayData.size();
     QJS *oldData, *newData, *address;
     if (_signalsEnabled)
     {
@@ -837,7 +829,6 @@ void QJS::prepend(double value)
 void QJS::prepend(long long value)
 {
     _arrayData.prepend(new QJS(value));
-    _size = _arrayData.size();
     QJS *oldData, *newData, *address;
     if (_signalsEnabled)
     {
@@ -851,7 +842,6 @@ void QJS::prepend(long long value)
 void QJS::prepend(const char *value)
 {
     _arrayData.prepend(new QJS(value));
-    _size = _arrayData.size();
     QJS *oldData, *newData, *address;
     if (_signalsEnabled)
     {
@@ -865,7 +855,6 @@ void QJS::prepend(const char *value)
 void QJS::prepend(QString value)
 {
     _arrayData.prepend(new QJS(value));
-    _size = _arrayData.size();
     QJS *oldData, *newData, *address;
     if (_signalsEnabled)
     {
@@ -879,7 +868,6 @@ void QJS::prepend(QString value)
 void QJS::prepend(QJS &value)
 {
     _arrayData.prepend(new QJS(value));
-    _size = _arrayData.size();
     QJS *oldData, *newData, *address;
     if (_signalsEnabled)
     {
@@ -893,7 +881,6 @@ void QJS::prepend(QJS &value)
 void QJS::prepend(QJS *value)
 {
     _arrayData.prepend(new QJS(value));
-    _size = _arrayData.size();
     QJS *oldData, *newData, *address;
     if (_signalsEnabled)
     {
@@ -907,7 +894,6 @@ void QJS::prepend(QJS *value)
 void QJS::prepend(QJS::Type type)
 {
     _arrayData.prepend(new QJS(type));
-    _size = _arrayData.size();
     QJS *oldData, *newData, *address;
     if (_signalsEnabled)
     {
@@ -929,7 +915,6 @@ void QJS::remove(int index)
     if (_type==QJS::Array)
     {
         _arrayData.remove(index);
-        this->_size = _arrayData.size();
     }
     //Обработка сигналов
     if (_signalsEnabled)
@@ -1680,7 +1665,6 @@ void QJS::transformParent()
                 delete js;
             }
             _parent->_objectData.clear();
-            _parent->_size=_parent->_arrayData.size();
         }
         if (_desirebleParentType==QJS::Object){
             foreach (QJS* js, _parent->_arrayData)
@@ -1688,7 +1672,6 @@ void QJS::transformParent()
                 delete js;
             }
             _parent->_arrayData.clear();
-            _parent->_size=_parent->_objectData.size();
         }
     }
     if (_desirebleParentType!=QJS::Null)
@@ -1701,8 +1684,6 @@ void QJS::transformParent()
         {
             if (_parent->_type==QJS::Array)
             {
-                if (_index+1>_parent->_size)
-                    _parent->setSize(_index+1);
                 if (!_exists)
                 {
                     while (_index>_parent->_arrayData.size())
@@ -1733,10 +1714,10 @@ void QJS::transformParent()
     _parent->transformParent();
 }
 
-void QJS::setSize(int size)
-{
-    _size = size;
-}
+//void QJS::setSize(int size)
+//{
+//    _size = size;
+//}
 
 void QJS::addChild(QJS *child)
 {

@@ -214,8 +214,8 @@ private:
     QJS* _parent; //Указатель на предка
     QHash< QJS*, QJS* > _nonExistsObjects; //Указатели на несуществующие объекты
     void transformParent();
-    void setSize(int size);
-    int _size;
+//    void setSize(int size);
+    //int _size;
     int _index;
     QString _key;
     bool _exists;
